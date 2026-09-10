@@ -1,0 +1,30 @@
+# Compose-файл описывает локальную инфраструктуру учебного проекта.
+version: "3.8"
+
+services:
+  # Единственный сервис сейчас - PostgreSQL; Go API запускается отдельно.
+  postgres:
+    image: postgres:15-alpine
+    container_name: tasks-postgres
+    # Эти значения используются и контейнером, и DSN приложения.
+    environment:
+      POSTGRES_DB: tasksdb
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: taskpass
+    ports:
+      - "5432:5432"
+    # Первый volume сохраняет данные, второй подключает стартовый SQL.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    # Docker сможет определить, когда база готова принимать подключения.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskuser -d tasksdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  # Именованный volume переживает перезапуск контейнера.
+  postgres_data:
+
