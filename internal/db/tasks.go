@@ -135,4 +135,30 @@ func DELETEtask(s *TaskStore, id int) error {
 	}
 	return nil
 }
-
+func (s *TaskStore)GetAllFiltered(completed *bool)([]models.Task,error){
+	var tasks []models.Task
+	
+	if completed == nil{
+		
+		query := `SELECT id, title, description, completed, created_at, updated_at
+		FROM tasks
+		ORDER BY created_at DESC`
+		err := s.db.Select(&tasks, query)
+		
+		if err != nil{
+			return nil,err
+		}
+		
+	}
+	if completed != nil{
+		query := `SELECT id, title, description, completed, created_at, updated_at
+		FROM tasks
+		WHERE completed = $1
+		ORDER BY created_at DESC`
+		err := s.db.Select(&tasks, query,*completed)
+		if err != nil{
+			return nil, err
+		}
+	}
+	return tasks, nil
+}

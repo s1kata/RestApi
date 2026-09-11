@@ -54,14 +54,29 @@ func respondWithError(w http.ResponseWriter, statuscode int, message string) {
 // GetAllTasks обрабатывает запрос на получение списка задач.
 func (h *Handler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 	// Handler делегирует работу с базой объекту store.
-	tasks, err := h.store.GetAll()
-	if err != nil {
-		// Ошибка базы не должна приводить к успешному HTTP-ответу.
-		respondWithError(w, http.StatusInternalServerError, "Ошибка получения задач")
+	q := r.URL.Query().Get("completed")
+	var tasks []models.Task
+	var err error
+
+	switch q{
+	case "":
+		tasks, err = h.store.GetAllFiltered(nil)
+	case "true":
+		b := true
+		tasks, err = h.store.GetAllFiltered(&b)
+	case "false":
+		b := false
+		tasks, err = h.store.GetAllFiltered(&b)
+	default:
+		respondWithError(w, http.StatusBadRequest,"Некоректный параметр comleted")
 		return
 	}
-	// При успехе отправляем список со статусом 200 OK.
-	respondWithJSON(w, http.StatusOK, tasks)
+	if err != nil{
+		respondWithError(w, http.StatusInternalServerError, "Ошибка получения задач ")
+		return
+	}
+	respondWithJSON(w,http.StatusOK, tasks)
+	
 }
 
 // GetTask обрабатывает запрос на получение одной задачи по ID из URL.
