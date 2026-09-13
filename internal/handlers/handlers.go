@@ -117,16 +117,15 @@ func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, task)
 }
 func (h *Handler) UpdateTask(w http.ResponseWriter, r *http.Request) {
-	pathPass := strings.Split(strings.TrimPrefix(r.URL.Path, "/tasks"), "/")
-	idStr := pathPass[0]
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Некоректный id")
+	id, ok  := parseTaskIDFromPath(r.URL.Path)
+	if !ok{
+		respondWithError(w, http.StatusBadRequest, "некоректный id")
 		return
 	}
+
 	var input models.UpdateTaskInput
-	err = json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
+	var err error
+	if err = json.NewDecoder(r.Body).Decode(&input);err != nil {
 		respondWithError(w, http.StatusBadRequest, "Некоректные данные")
 		return
 	}
