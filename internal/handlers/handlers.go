@@ -160,3 +160,4 @@ func (h *Handler) GetStats(w http.ResponseWriter, r *http.Request){
 	respondWithJSON(w, http.StatusOK, stats)
 
 }
+
