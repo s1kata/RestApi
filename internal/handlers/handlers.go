@@ -36,17 +36,13 @@ func parseTaskIDFromPath(rawPath string) (int, bool) {
 	return id, true
 }
 
-// respondWithJSON формирует единый JSON-ответ для всех endpoint'ов.
 func respondWithJSON(w http.ResponseWriter, statuscode int, payload interface{}) {
-	// Сообщаем клиенту, что тело ответа содержит JSON.
+	
 	w.Header().Set("Content-Type", "application/json")
-	// Статус нужно записать до тела ответа.
 	w.WriteHeader(statuscode)
-	// Encoder преобразует Go-значение в JSON и записывает его в ResponseWriter.
 	_ = json.NewEncoder(w).Encode(payload)
 }
 
-// respondWithError возвращает ошибку в одинаковом формате {"error": "..."}.
 func respondWithError(w http.ResponseWriter, statuscode int, message string) {
 	respondWithJSON(w, statuscode, map[string]string{"error": message})
 }
@@ -78,8 +74,6 @@ func (h *Handler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w,http.StatusOK, tasks)
 	
 }
-
-// GetTask обрабатывает запрос на получение одной задачи по ID из URL.
 func (h *Handler) GetTask(w http.ResponseWriter, r *http.Request) {
 	id, ok := parseTaskIDFromPath(r.URL.Path)
 	if !ok {
@@ -95,8 +89,6 @@ func (h *Handler) GetTask(w http.ResponseWriter, r *http.Request) {
 
 	respondWithJSON(w, http.StatusOK, task)
 }
-
-// CreateTask создаёт новую задачу по JSON-данным.
 func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	var input models.CreateTaskInput
 
@@ -158,4 +150,13 @@ func (h *Handler) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusOK, map[string]string{"message": "deleted"})
+}
+func (h *Handler) GetStats(w http.ResponseWriter, r *http.Request){
+	stats, err := database.Statstask(h.store)
+	if err != nil{
+		respondWithError(w, http.StatusInternalServerError, "Ошибка получения статистики")
+		return
+	}
+	respondWithJSON(w, http.StatusOK, stats)
+
 }

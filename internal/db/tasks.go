@@ -19,28 +19,28 @@ func NewTaskStore(db *sqlx.DB) *TaskStore {
 	return &TaskStore{db: db}
 }
 
-// GetAll получает все задачи из базы данных.
+
 func (s *TaskStore) GetAll() ([]models.Task, error) {
-	// Срез будет заполнен библиотекой sqlx результатами запроса.
+	
 	var tasks []models.Task
 
-	// Обратная сортировка показывает сначала самые новые задачи.
+	
 	query := `
 	SELECT id, title, description, completed, created_at, updated_at
 	FROM tasks
 	ORDER BY created_at DESC`
 
-	// Select предназначен для запроса, который возвращает несколько строк.
+	
 	err := s.db.Select(&tasks, query)
 	if err != nil {
-		// nil показывает, что список нельзя считать достоверным.
+	
 		return nil, err
 	}
-	// Возвращаем заполненный список и отсутствие ошибки.
+	
 	return tasks, nil
 }
 
-// GetByID ищет одну задачу по её идентификатору.
+
 func (s *TaskStore) GetByID(id int) (*models.Task, error) {
 	var task models.Task
 
@@ -48,14 +48,14 @@ func (s *TaskStore) GetByID(id int) (*models.Task, error) {
 	SELECT id, title, description, completed, created_at, updated_at
 	FROM tasks
 	WHERE id = $1`
-	// $1 - параметр запроса, а id передаётся отдельно от SQL-текста.
+	
 	err := s.db.Get(&task, query, id)
 	if err == sql.ErrNoRows {
-		// Отсутствие строки превращаем в понятную прикладную ошибку.
+	
 		return nil, fmt.Errorf("task with id %d not found", id)
 	}
 	if err != nil {
-		// Остальные ошибки базы передаём выше без подмены.
+		
 		return nil, err
 	}
 	return &task, nil
@@ -161,4 +161,21 @@ func (s *TaskStore)GetAllFiltered(completed *bool)([]models.Task,error){
 		}
 	}
 	return tasks, nil
+	
 }
+func Statstask(s *TaskStore)(models.TaskStats,error){
+		var stats models.TaskStats
+		query := `
+		SELECT 
+		COUNT(*) AS total,
+		COUNT(*) FILTER (WHERE  completed = true) AS completed,
+		COUNT(*) FILTER (WHERE completed = false) AS pending
+		FROM tasks
+		`
+		err := s.db.Get(&stats, query)
+		if err != nil {
+			return models.TaskStats{}, err
+		}
+		return stats, nil
+		
+	}

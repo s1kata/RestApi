@@ -35,7 +35,7 @@ func main() {
     mux := http.NewServeMux()
     mux.HandleFunc("/tasks", tasksHandler(handler))
     mux.HandleFunc("/tasks/", taskIDHandler(handler))
-
+    mux.HandleFunc("tasks/stats", handler.GetStats)
     log.Printf("Сервер запущен на порту %s", serverPort)
 
     if err := http.ListenAndServe(":"+serverPort, loggingMiddleware(mux)); err != nil {

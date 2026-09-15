@@ -31,3 +31,8 @@ type UpdateTaskInput struct {
 	Description *string `json:"description"`
 	Completed   *bool   `json:"completed"`
 }
+type TaskStats struct{
+	Total int `json:"total"`
+	Completed int `json:"compeleted"`
+	Pending int `json:"pending"`
+}
