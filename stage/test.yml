@@ -1,0 +1,8 @@
+test:
+  rules:
+    - when: always
+  tags: 
+    - test
+  stage: test
+  script:
+    - go test ./...
