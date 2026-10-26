@@ -1,8 +1,25 @@
 include:
   - local: 'stage/test.yml'
   - local: 'stage/build.yml'
-  - local: 'stage/deploy.yml'
+
 stages:
   - test
   - build
   - deploy
+
+deploy:
+  stage: deploy
+  image: alpine/k8s:latest
+  rules:
+    - when: always
+  tags:
+    - build
+  script:
+    - echo "=== Проверка переменной KUBECONFIG ==="
+    - echo "Путь к конфигу: $KUBECONFIG"
+    - ls -la $KUBECONFIG
+    - echo "=== Проверка доступа к кластеру ==="
+    - kubectl cluster-info
+    - echo "=== Деплой ==="
+    - cd restapi
+    - helm upgrade --install restapi . --namespace default --set restApi.image.tag=$CI_COMMIT_SHORT_SHA --wait
