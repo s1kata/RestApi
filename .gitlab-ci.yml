@@ -16,6 +16,7 @@ deploy:
     - build
   script:
     - echo "=== Проверка переменной KUBECONFIG ==="
+    - echo "Путь к конфигу: $KUBECONFIG"
     - ls -la $KUBECONFIG
     - echo "=== Проверка доступа к кластеру ==="
     - kubectl cluster-info
