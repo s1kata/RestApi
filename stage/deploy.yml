@@ -6,8 +6,15 @@ deploy:
   tags:
    - build
   script:
-   - echo "Проверка доступности кластера"
+   - echo "=== Проверка переменной KUBECONFIG ==="
+   - echo "Путь к конфигу: $KUBECONFIG"
+   - ls -la $KUBECONFIG
+   - echo "=== Содержимое конфига (первые строки) ==="
+   - head -n 5 $KUBECONFIG
+   
+   - echo "=== Проверка доступа к кластеру ==="
    - kubectl cluster-info
-   - echo "Деплой чарта"
+   
+   - echo "=== Деплой ==="
    - cd restapi
    - helm upgrade --install restapi . --namespace default --set restApi.image.tag=$CI_COMMIT_SHORT_SHA --wait
