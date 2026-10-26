@@ -1,12 +1,13 @@
 deploy:
+  stage: deploy
+  image: alpine/k8s:latest
   rules:
     - when: always
   tags:
    - build
-  stage: deploy
   script:
    - echo "Проверка доступности кластера"
    - kubectl cluster-info
    - echo "Деплой чарта"
    - cd restapi
-   - helm upgrade --install restapi .
+   - helm upgrade --install restapi . --namespace default --set restApi.image.tag=$CI_COMMIT_SHORT_SHA --wait
