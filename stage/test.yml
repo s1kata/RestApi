@@ -6,3 +6,6 @@ test:
   stage: test
   script:
     - go test ./...
+    - cd restapi
+    - helm tempalte restapi .
+    

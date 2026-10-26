@@ -1,6 +1,8 @@
 include:
   - local: 'stage/test.yml'
   - local: 'stage/build.yml'
+  - local: 'stage/deploy.yml'
 stages:
   - test
   - build
+  - deploy

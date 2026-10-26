@@ -1,0 +1,12 @@
+deploy:
+  rules:
+    - when: always
+  tags:
+   - build
+  stage: deploy
+  script:
+   - echo "Проверка доступности кластера"
+   - kubectl cluster-info
+   - echo "Деплой чарта"
+   - cd restapi
+   - helm upgrade --install restapi .

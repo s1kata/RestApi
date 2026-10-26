@@ -1,0 +1,27 @@
+replicaCount: 1
+
+restApi:
+  image:
+    repository: ghcr.io/s1kata/rest-api
+    tag: latest
+    containerPort: 8080
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+  env:
+    databaseName: tasksdb
+db:
+  image:
+    repository: postgres
+    tag: 15-alpine
+  port: 5432
+  targetPort: 5432
+  env:
+    POSTGRES_DB: tasksdb
+    POSTGRES_USER: taskuser
+    POSTGRES_PASSWORD: taskpass
+  service:
+    type: ClusterIP
+    port: 5432
+    targetPort: 5432

@@ -9,3 +9,6 @@ build:
     - echo "$GHCR_TOKEN" | docker login ghcr.io -u s1kata --password-stdin
     - docker push ghcr.io/s1kata/rest-api:$CI_COMMIT_SHORT_SHA
     - docker push ghcr.io/s1kata/rest-api:latest
+    - cd restapi
+    - helm install restapi .
+    
