@@ -13,9 +13,25 @@ spec:
     metadata: 
       labels: 
         app: db
-      spec:
-        containers:
-          - name: db
-            image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
-            ports:
-              - containerPort: 5432
+    spec:
+      containers:
+        - name: db
+          image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
