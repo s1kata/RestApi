@@ -4,7 +4,7 @@ restApi:
   image:
     repository: ghcr.io/s1kata/rest-api
     tag: latest
-    containerPort: 8080
+  containerPort: 8080
   service:
     type: ClusterIP
     port: 8080
