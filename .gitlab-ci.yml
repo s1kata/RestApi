@@ -26,7 +26,6 @@ build:
 
 deploy:
   stage: deploy
-  image: alpine/k8s:latest
   rules:
     - when: always
   tags:
