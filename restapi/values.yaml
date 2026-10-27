@@ -6,7 +6,7 @@ restApi:
     tag: latest
   containerPort: 8080
   service:
-    type: ClusterIP
+    type: NodePort
     port: 8080
     targetPort: 8080
   env:

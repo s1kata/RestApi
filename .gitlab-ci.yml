@@ -32,4 +32,4 @@ deploy:
     - build
   script:
     - cd restapi
-    - helm upgrade --install restapi . --namespace default --set restApi.image.tag=$CI_COMMIT_SHORT_SHA --wait
+    - helm upgrade --install restapi . --namespace default --set restApi.image.tag=$CI_COMMIT_SHORT_SHA
