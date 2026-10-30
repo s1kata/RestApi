@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rest-api
+  labels:
+    app: api
+spec:
+  type: {{ .Values.restApi.service.type }}
+  selector:
+    app: api
+  ports:
+    - port: {{ .Values.restApi.service.port }}
+      targetPort: {{ .Values.restApi.service.targetPort }}
+      protocol: TCP

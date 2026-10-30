@@ -1,0 +1,35 @@
+stages:
+  - test
+  - build
+  - deploy
+
+test:
+  stage: test
+  image: golang:1.24-alpine
+  tags:
+    - test
+  script:
+    - go test ./...
+
+build:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  tags:
+    - build
+  script:
+    - docker build -t ghcr.io/s1kata/rest-api:$CI_COMMIT_SHORT_SHA -t ghcr.io/s1kata/rest-api:latest .
+    - echo "$GHCR_TOKEN" | docker login ghcr.io -u s1kata --password-stdin
+    - docker push ghcr.io/s1kata/rest-api:$CI_COMMIT_SHORT_SHA
+    - docker push ghcr.io/s1kata/rest-api:latest
+
+deploy:
+  stage: deploy
+  rules:
+    - when: always
+  tags:
+    - build
+  script:
+    - cd restapi
+    - helm upgrade --install restapi . --namespace default --set restApi.image.tag=$CI_COMMIT_SHORT_SHA
